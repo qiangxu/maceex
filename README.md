@@ -31,3 +31,10 @@ node src/attest-test.js
 访问 [EAS Arbitrum Goerli Explorer](https://arbitrum-goerli.easscan.org/)，搜索 Tx Hash。
 
 
+## 网络配置
+
+- 网络名称: Arbitrum Sepolia
+- RPC: https://sepolia-rollup.arbitrum.io/rpc
+- Chain ID: 421614
+- 浏览器: https://sepolia.arbiscan.io
+- EAS Explorer: https://sepolia.easscan.org

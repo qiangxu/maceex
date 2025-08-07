@@ -1,9 +1,9 @@
 require("dotenv").config();
 const { JsonRpcProvider } = require("ethers");
 
-console.log("RPC URL:", process.env.ARBITRUM_RPC_URL);
+console.log("RPC URL:", process.env.BASE_RPC_URL);
 
-const provider = new JsonRpcProvider(process.env.ARBITRUM_RPC_URL);
+const provider = new JsonRpcProvider(process.env.BASE_RPC_URL);
 
 async function main() {
       const blockNumber = await provider.getBlockNumber();

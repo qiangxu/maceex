@@ -1,0 +1,8 @@
+字段名称,FIELD_NAME,FIELD_TYPE
+交易编号,BAR_NO,varchar(32)
+项目类型,PROJT_TYPE,varchar(20)
+项目地点,COUNTRY,varchar(4)
+交易数量,BAR_VOL,decimal(19,4)
+交易金额,BAR_AMT,decimal(19,4)
+卖方,BUYER,varchar(256)
+买方,SELLER,varchar(256)

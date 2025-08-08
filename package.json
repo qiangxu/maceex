@@ -1,6 +1,7 @@
 {
   "name": "maceex",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,6 +14,9 @@
     "@ethereum-attestation-service/eas-sdk": "^2.7.0",
     "csv-parse": "^6.1.0",
     "dotenv": "^17.2.1",
-    "ethers": "^6.15.0"
+    "ethers": "^6.15.0",
+    "ndjson": "^2.0.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   }
 }

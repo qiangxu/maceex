@@ -1,9 +1,14 @@
+require("dotenv").config();
+console.log("🛠️ Using RPC URL:", process.env.RPC_URL);
+console.log("🛠️ Using SCHEMA_UID:", process.env.SCHEMA_UID);
+console.log("🛠️ Using EAS_CONTRACT_ADDRESS:", process.env.EAS_CONTRACT_ADDRESS);
+
+const schemaUID = process.env.SCHEMA_UID
+
 const crypto = require("crypto");
 const { eas, SchemaEncoder } = require("./eas");
 const { signer, provider } = require("./client");
 
-
-const schemaUID = "0xcb086ec854a03129a886407008b777592634fd93ae2a46565e0ea7d3e9a6cf23"
 
 async function main() {
     const encoder = new SchemaEncoder(

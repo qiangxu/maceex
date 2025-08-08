@@ -27,6 +27,7 @@ export async function attestRecord(record) {
 		schemaFields.map(f => `${f.type} ${f.name}`).join(',')
 	).encodeData(encodeDataFromSchema(schemaFields, record));
 
+	let nonce = await provider.getTransactionCount(signer.address);
 	const tx = await eas.attest({
 		schema: SCHEMA_UID,
 		data: {
@@ -34,10 +35,10 @@ export async function attestRecord(record) {
 			expirationTime: 0,
 			revocable: true,
 			data: encoded
-		}
+		},
+		nonce,
 	});
 
-	const attest_uid = await tx.wait();
-	return attest_uid;
+	return tx;
 }
 

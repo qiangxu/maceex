@@ -31,7 +31,8 @@ async function processFile(filePath) {
 				continue;
 			}
 
-			const uid = await attestRecord(record);
+			const tx = await attestRecord(record);
+			let uid = await tx.wait();
 			console.log(`✅ RECORD_ID ${recordId} attested. UID: ${uid}`);
 
 			await saveResult(db, recordId, uid);

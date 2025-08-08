@@ -1,42 +1,62 @@
-const fs = require('fs');
-const csvParse = require('csv-parse/lib/sync');
+// tools/schema-tools.js
 
+const fs = require("fs");
+const path = require("path");
+const { parse } = require("csv-parse/sync");
+
+// 1. 解析 CSV 文件生成字段结构（用于 schema 注册 + encodeData）
 function parseCsvSchema(csvPath) {
-    const content = fs.readFileSync(csvPath);
-    const records = csvParse(content, { columns: true });
+  const content = fs.readFileSync(csvPath);
+  const records = parse(content, { columns: true });
 
-    return records.map(row => {
-        let type;
-        if (row['FIELD_TYPE'].startsWith('varchar')) {
-            type = 'string';
-        } else if (row['FIELD_TYPE'].startsWith('decimal')) {
-            type = 'uint256';
-        } else {
-            throw new Error(`UNKNOWN FIELD_TYPE: ${row['FIELD_TYPE']}`);
-        }
-        return {
-            name: row['FIELD_NAME'],
-            type,
-            precision: row['FIELD_TYPE'].startsWith('decimal') ? parseInt(row['FIELD_TYPE'].match(/\d+,\s*(\d+)/)[1]) : null
-        };
-    });
+  return records.map((row) => {
+    const rawType = row["FIELD_TYPE"];
+    const name = row["FIELD_NAME"];
+
+    let type;
+    let precision = null;
+
+    if (rawType.startsWith("varchar")) {
+      type = "string";
+    } else if (rawType.startsWith("decimal")) {
+      type = "uint256";
+      const match = rawType.match(/decimal\(\d+,\s*(\d+)\)/);
+      if (match) {
+        precision = parseInt(match[1]);
+      }
+    } else {
+      throw new Error(`UNKNOWN FIELD_TYPE: ${rawType}`);
+    }
+
+    return { name, type, precision };
+  });
 }
 
-function generateSchemaDefinition(schemaFields) {
-    return schemaFields.map(f => `${f.type} ${f.name}`).join(', ');
+// 2. 生成 EAS Schema 字符串
+function generateSchemaDefinition(fields) {
+  return fields.map((f) => `${f.type} ${f.name}`).join(", ");
 }
 
-function encodeData(schemaFields, rawData) {
-    return schemaFields.map(f => {
-        let value = rawData[f.name];
-        if (f.type === 'uint256' && f.precision) {
-            value = (parseFloat(value) * Math.pow(10, f.precision)).toFixed(0);
-        }
-        return {
-            name: f.name,
-            value,
-            type: f.type
-        };
-    });
+// 3. 将一笔订单数据按 schema 结构 encode
+function encodeDataFromSchema(fields, rowData) {
+  return fields.map((f) => {
+    let value = rowData[f.name];
+
+    if (f.type === "uint256" && f.precision !== null) {
+      value = (parseFloat(value) * Math.pow(10, f.precision)).toFixed(0);
+    }
+
+    return {
+      name: f.name,
+      value,
+      type: f.type,
+    };
+  });
 }
+
+module.exports = {
+  parseCsvSchema,
+  generateSchemaDefinition,
+  encodeDataFromSchema,
+};
 

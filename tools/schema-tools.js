@@ -1,11 +1,12 @@
 // tools/schema-tools.js
+import fs from 'fs';
+import path from 'path';
+import { parse } from 'csv-parse/sync';
 
-const fs = require("fs");
-const path = require("path");
-const { parse } = require("csv-parse/sync");
-
-// 1. 解析 CSV 文件生成字段结构（用于 schema 注册 + encodeData）
-function parseCsvSchema(csvPath) {
+/**
+ * 1. 解析 CSV 文件生成字段结构（用于 schema 注册 + encodeData）
+ */
+export function parseCsvSchema(csvPath) {
   const content = fs.readFileSync(csvPath);
   const records = parse(content, { columns: true });
 
@@ -32,13 +33,17 @@ function parseCsvSchema(csvPath) {
   });
 }
 
-// 2. 生成 EAS Schema 字符串
-function generateSchemaDefinition(fields) {
+/**
+ * 2. 生成 EAS Schema 字符串
+ */
+export function generateSchemaDefinition(fields) {
   return fields.map((f) => `${f.type} ${f.name}`).join(", ");
 }
 
-// 3. 将一笔订单数据按 schema 结构 encode
-function encodeDataFromSchema(fields, rowData) {
+/**
+ * 3. 将一笔订单数据按 schema 结构 encode
+ */
+export function encodeDataFromSchema(fields, rowData) {
   return fields.map((f) => {
     let value = rowData[f.name];
 
@@ -53,10 +58,4 @@ function encodeDataFromSchema(fields, rowData) {
     };
   });
 }
-
-module.exports = {
-  parseCsvSchema,
-  generateSchemaDefinition,
-  encodeDataFromSchema,
-};
 

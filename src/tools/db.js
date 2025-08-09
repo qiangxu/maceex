@@ -37,3 +37,7 @@ export async function saveResult(db, recordId, uid) {
     );
 }
 
+export async function getAllAttestedRecordIds(db) {
+  const rows = await db.all('SELECT RECORD_ID FROM attestations');
+  return rows.map(r => r.RECORD_ID);
+}

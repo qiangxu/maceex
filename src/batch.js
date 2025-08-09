@@ -5,22 +5,22 @@ import keccak256 from 'keccak256';
 import { MerkleTree } from 'merkletreejs';
 import { fileURLToPath } from 'url';
 
-import { readNdjson } from '../tools/ndjson.js';
+import { readNdjson } from './tools/ndjson.js';
 import {
   openDB, getAllAttestedRecordIds,
   upsertBatchHeader, insertBatchRecords,
   markBatchSent, markBatchConfirmed, markBatchFailed,
   getBatchHeader, listPendingBatchHeaders
-} from '../db.js';
+} from './tools/db.js';
 
-import { attestMerkleBatch, getReceipt } from '../eas.js';
+import { attestMerkleBatch, getReceipt } from './eas.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname  = path.dirname(__filename);
 
 const DIR_INPUT_RECORDS = process.env.DIR_INPUT_RECORDS;
 const DIR_MERKLE        = process.env.DIR_MERKLE;
-const STATE_FILE        = process.env.STATE_FILE;
+const APP_STATE         = process.env.APP_STATE;
 
 const toHex = (buf) => '0x' + Buffer.from(buf).toString('hex');
 const leafFromRecord = (rec) => keccak256(Buffer.from(JSON.stringify(rec)));
@@ -75,7 +75,7 @@ async function recoverPendingBatches(db) {
 }
 
 async function main() {
-  const db = await openDB(STATE_FILE);
+  const db = await openDB(APP_STATE);
 
   // 0) 启动先做一次恢复
   await recoverPendingBatches(db);

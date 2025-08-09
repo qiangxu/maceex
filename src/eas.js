@@ -1,44 +1,50 @@
-// src/eas.js
 import 'dotenv/config';
 import { ethers } from 'ethers';
 import { EAS, SchemaEncoder } from '@ethereum-attestation-service/eas-sdk';
-import { parseCsvSchema, encodeDataFromSchema } from '../tools/schema-tools.js';
 
-// 加载环境变量
-const RPC_URL = process.env.RPC_URL;
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
-const SCHEMA_UID = process.env.SCHEMA_UID;
-const SCHEMA_CSV_PATH = process.env.SCHEMA_CSV_PATH || './data/schema.csv';
+const {
+  RPC_URL,
+  PRIVATE_KEY,
+  EAS_CONTRACT_ADDRESS,
+  SCHEMA_UID_BATCH
+} = process.env;
 
-// 初始化 provider 和 signer
 const provider = new ethers.JsonRpcProvider(RPC_URL);
-const signer = new ethers.Wallet(PRIVATE_KEY, provider);
+const signer   = new ethers.Wallet(PRIVATE_KEY, provider);
 
-// 初始化 EAS SDK
-const eas = new EAS(process.env.EAS_CONTRACT_ADDRESS);
+const eas = new EAS(EAS_CONTRACT_ADDRESS);
 eas.connect(signer);
 
-// 预加载字段定义
-const schemaFields = parseCsvSchema(SCHEMA_CSV_PATH);
+const encoder = new SchemaEncoder(
+  'bytes32 merkle_root,string batch_id,uint64 count,string proofs_pointer'
+);
 
-// 主函数：提交一条 attestation
-export async function attestRecord(record) {
-	const encoded = new SchemaEncoder(
-		schemaFields.map(f => `${f.type} ${f.name}`).join(',')
-	).encodeData(encodeDataFromSchema(schemaFields, record));
+export async function attestMerkleBatch({ merkle_root, batch_id, count, proofs_pointer }) {
+  const data = encoder.encodeData([
+    { name: 'merkle_root',    value: merkle_root,   type: 'bytes32' },
+    { name: 'batch_id',       value: batch_id,      type: 'string'  },
+    { name: 'count',          value: Number(count), type: 'uint64'  },
+    { name: 'proofs_pointer', value: proofs_pointer,type: 'string'  }
+  ]);
 
-	let nonce = await provider.getTransactionCount(signer.address);
-	const tx = await eas.attest({
-		schema: SCHEMA_UID,
-		data: {
-			recipient: ethers.ZeroAddress,
-			expirationTime: 0,
-			revocable: true,
-			data: encoded
-		},
-		nonce,
-	});
+  const nonce = await provider.getTransactionCount(signer.address);
+  const tx = await eas.attest({
+    schema: SCHEMA_UID_BATCH,
+    data: {
+      recipient: ethers.ZeroAddress,
+      expirationTime: 0,
+      revocable: true,
+      data
+    },
+	nonce,
+  });
 
-	return tx;
+  // EAS SDK: tx.tx.hash 可拿到 raw tx hash；tx.uid 是 attestation uid
+  const receipt = await tx.tx.wait();
+  return { uid: tx.uid, txHash: tx.tx.hash, receipt };
+}
+
+export async function getReceipt(txHash) {
+  return provider.getTransactionReceipt(txHash);
 }
 

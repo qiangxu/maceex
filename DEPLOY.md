@@ -38,19 +38,3 @@ node src/attest-test.js
 - 浏览器: https://sepolia.arbiscan.io
 - EAS Explorer: https://base-sepolia.easscan.org
 
-## 核心逻辑流程图
-
-```css
-[Watchdog 监听文件变更]
-         ↓
-[读取 NDJSON 全量记录]
-         ↓
-[对比 SQLite：哪些 RECORD_ID 未处理？]
-         ↓
-[逐条 encodeData → eas.attest()]
-         ↓
-[写入 TxHash + UID 到 SQLite]
-         ↓
-[完成 ✅]
-
-```

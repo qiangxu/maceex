@@ -1,0 +1,16 @@
+{
+    "record_id": "1",
+    "order": {
+        "RECORD_ID": "1",
+        "BAR_NO": "TX20250001",
+        "PROJT_TYPE": "Export",
+        "COUNTRY": "SG",
+        "BAR_VOL": 4108.6751,
+        "BAR_AMT": 9154289.6646,
+        "BUYER": "Stafford PLC",
+        "SELLER": "Smith-Thomas"
+    },
+    "proof": [
+        "0x22e52d3963c6035f1476141da786a7cc3ca540af934f6175771f1660ca2db371"
+    ]
+}

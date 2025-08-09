@@ -7,18 +7,15 @@ import { openDB, getAllAttestedRecordIds } from '../tools/db.js';
 
 const DIR_MERKLE = process.env.DIR_MERKLE;
 async function main() {
-	const db = await openDB(process.env.STATE_FILE);
+	const db = await openDB(process.env.DB_STATE);
 	const allRecords = await readNdjson(process.env.INPUT_RECORDS);
 	const attestedIds = await getAllAttestedRecordIds(db);
 
-	const records = allRecords.filter(r => attestedIds.includes(r.RECORD_ID)).slice(0, 2);
+	const records = allRecords.filter(r => attestedIds.includes(r.RECORD_ID));
 
 	const leaves = records.map((r) => {
-        console.log(r);
 		return keccak256(Buffer.from(JSON.stringify(r)));
 	});
-    console.log("LEAF1:", leaves[0])
-    console.log("LEAF2:", leaves[1])
 	const tree = new MerkleTree(leaves, keccak256, { sortPairs: true });
 	const merkleRoot = tree.getHexRoot();
 

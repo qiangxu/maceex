@@ -1,0 +1,10 @@
+{"RECORD_ID": "1", "BAR_NO": "TX20250001", "PROJT_TYPE": "Export", "COUNTRY": "SG", "BAR_VOL": 4108.6751, "BAR_AMT": 9154289.6646, "BUYER": "Stafford PLC", "SELLER": "Smith-Thomas"}
+{"RECORD_ID": "2", "BAR_NO": "TX20250002", "PROJT_TYPE": "Import", "COUNTRY": "HK", "BAR_VOL": 9425.0632, "BAR_AMT": 2267320.7482, "BUYER": "Harris Ltd", "SELLER": "Cole Ltd"}
+{"RECORD_ID": "3", "BAR_NO": "TX20250003", "PROJT_TYPE": "Export", "COUNTRY": "US", "BAR_VOL": 5879.3726, "BAR_AMT": 246869.3042, "BUYER": "Simpson, Thomas and Sanchez", "SELLER": "Gray, Campbell and Harmon"}
+{"RECORD_ID": "4", "BAR_NO": "TX20250004", "PROJT_TYPE": "RWA", "COUNTRY": "US", "BAR_VOL": 2368.2723, "BAR_AMT": 2576135.8774, "BUYER": "Baker PLC", "SELLER": "Holmes LLC"}
+{"RECORD_ID": "5", "BAR_NO": "TX20250005", "PROJT_TYPE": "Import", "COUNTRY": "CN", "BAR_VOL": 56.6526, "BAR_AMT": 606997.1529, "BUYER": "Roberts, West and Mitchell", "SELLER": "Bennett, Garcia and Jacobson"}
+{"RECORD_ID": "6", "BAR_NO": "TX20250006", "PROJT_TYPE": "Export", "COUNTRY": "US", "BAR_VOL": 4167.3993, "BAR_AMT": 8869121.0713, "BUYER": "Rodriguez, Kent and Lewis", "SELLER": "Collier Inc"}
+{"RECORD_ID": "7", "BAR_NO": "TX20250007", "PROJT_TYPE": "Import", "COUNTRY": "SG", "BAR_VOL": 3122.0312, "BAR_AMT": 2691883.1075, "BUYER": "Hayes, Vaughan and Woods", "SELLER": "Young-Ford"}
+{"RECORD_ID": "8", "BAR_NO": "TX20250008", "PROJT_TYPE": "RWA", "COUNTRY": "US", "BAR_VOL": 4329.4492, "BAR_AMT": 7504636.9718, "BUYER": "Cruz LLC", "SELLER": "Stanton-Huffman"}
+{"RECORD_ID": "9", "BAR_NO": "TX20250009", "PROJT_TYPE": "DigitalTrade", "COUNTRY": "HK", "BAR_VOL": 8754.2678, "BAR_AMT": 9045746.2187, "BUYER": "Robinson-Olson", "SELLER": "Dorsey-Rogers"}
+{"RECORD_ID": "10", "BAR_NO": "TX20250010", "PROJT_TYPE": "RWA", "COUNTRY": "SG", "BAR_VOL": 5439.1634, "BAR_AMT": 876095.4059, "BUYER": "Cisneros-Velasquez", "SELLER": "Nelson and Sons"}

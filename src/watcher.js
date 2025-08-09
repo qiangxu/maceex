@@ -11,7 +11,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 const INPUT_FILE = process.env.INPUT_FILE
 console.log(`👀 Monitoring: ${INPUT_FILE}`);
-const db = await openDB(process.env.STATE_FILE);
+const db = await openDB(process.env.DB_STATE);
 
 async function processFile(filePath) {
 	const rl = readline.createInterface({

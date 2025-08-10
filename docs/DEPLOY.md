@@ -24,11 +24,11 @@ cp .env.example .env
 3. 测试写入一笔订单
 
 ```
-node src/attest-test.js
+node src/batch.js
 ```
 
 4. 验证结果：
-访问 [EAS Base Sepolia Explorer](https://arbitrum-goerli.easscan.org/)，搜索 Tx Hash。
+访问 [EAS Base Sepolia Explorer](https://base-sepolia.easscan.org/)，搜索Tx Hash。
 
 
 ## 网络配置
@@ -37,4 +37,3 @@ node src/attest-test.js
 - RPC: https://sepolia.base.org 
 - 浏览器: https://sepolia.arbiscan.io
 - EAS Explorer: https://base-sepolia.easscan.org
-

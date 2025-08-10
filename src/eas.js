@@ -6,7 +6,7 @@ const {
   RPC_URL,
   PRIVATE_KEY,
   EAS_CONTRACT_ADDRESS,
-  SCHEMA_UID_BATCH
+  SCHEMA_UID
 } = process.env;
 
 const provider = new ethers.JsonRpcProvider(RPC_URL);
@@ -29,7 +29,7 @@ export async function attestMerkleBatch({ merkle_root, batch_id, count, proofs_p
 
   const nonce = await provider.getTransactionCount(signer.address);
   const tx = await eas.attest({
-    schema: SCHEMA_UID_BATCH,
+    schema: SCHEMA_UID,
     data: {
       recipient: ethers.ZeroAddress,
       expirationTime: 0,
@@ -38,13 +38,14 @@ export async function attestMerkleBatch({ merkle_root, batch_id, count, proofs_p
     },
 	nonce,
   });
-
   // EAS SDK: tx.tx.hash 可拿到 raw tx hash；tx.uid 是 attestation uid
-  const receipt = await tx.tx.wait();
-  return { uid: tx.uid, txHash: tx.tx.hash, receipt };
+  const attestation_uid = await tx.wait();
+  return { uid: attestation_uid, txHash: tx.receipt.hash };
 }
 
 export async function getReceipt(txHash) {
+  console("debug: ", txHash);
+  console(provider.getTransactionReceipt(txHash));
   return provider.getTransactionReceipt(txHash);
 }
 

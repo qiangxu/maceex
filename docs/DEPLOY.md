@@ -21,7 +21,7 @@ npm install
 cp .env.example .env
 ```
 
-3. 测试写入一笔订单
+3. 测试订单
 
 ```
 node src/batch.js

@@ -15,7 +15,6 @@
 ┌───────────────────────────────────────────────────────────────┐
 │            ② 生成承诺（Commitments / Leaves）                 │
 │  - 对每条订单：JSON.stringify(order)                          │
-│  - Zerobase：可选加盐/承诺方案（避免可逆）                    │
 │  - keccak256 → 得到 leaf（每条订单一个 leaf）                 │
 └───────────────┬───────────────────────────────────────────────┘
                 │（叶子集合 leaves[]）
@@ -38,7 +37,7 @@
                 ▼
 ┌───────────────────────────────────────────────────────────────┐
 │             ⑤ 上链批次声明（EAS Attestation）                 │
-│  - Schema（建议）：                                           │
+│  - Schema：                                                   │
 │    bytes32 merkle_root, string batch_id, uint64 count,        │
 │    string proofs_pointer                                      │
 │  - 提交一笔 attest：只上链 root + 元数据（不暴露明文订单）    │

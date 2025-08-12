@@ -63,3 +63,18 @@
 4) 本地计算 leaf（同样的序列化 + 承诺方式）
 5) 用 leaf + proof 复原 root，比较是否等于链上 merkle_root → 相等：证明该订单确实包含在当时那批数据里（无需暴露整批数据）
 
+```
+node test/verify-proof.js test/proof_sample.json 0xac999f11fd7a26b48bfbd34c1eb76c4ff252a37b828560a031e517aed7820481
+LEAF (computed): 0x1cd48513936930aac8a3fa99106486784c1d1a87f3ed72de174759440c8c74ec
+STEP 1
+  sibling : 0x22e52d3963c6035f1476141da786a7cc3ca540af934f6175771f1660ca2db371
+    left    : 0x1cd48513936930aac8a3fa99106486784c1d1a87f3ed72de174759440c8c74ec
+      right   : 0x22e52d3963c6035f1476141da786a7cc3ca540af934f6175771f1660ca2db371
+        combined: 0x1cd48513936930aac8a3fa99106486784c1d1a87f3ed72de174759440c8c74ec22e52d3963c6035f1476141da786a7cc3ca540af934f6175771f1660ca2db371
+          next    : 0xac999f11fd7a26b48bfbd34c1eb76c4ff252a37b828560a031e517aed7820481
+          FINAL   : 0xac999f11fd7a26b48bfbd34c1eb76c4ff252a37b828560a031e517aed7820481
+          EXPECTED: 0xac999f11fd7a26b48bfbd34c1eb76c4ff252a37b828560a031e517aed7820481
+          Record ID: 1
+          Merkle Proof Valid: true
+
+```

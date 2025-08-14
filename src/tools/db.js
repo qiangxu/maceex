@@ -110,7 +110,9 @@ export async function markBatchConfirmed(
   );
 
   // 头记录删除（可选改为软删除）
+  /*
   await db.run(`DELETE FROM attestations WHERE record_id=?`, [rid]);
+  */
 }
 export async function getBatchHeader(db, batch_id) {
   const rid = batchHeaderId(batch_id);

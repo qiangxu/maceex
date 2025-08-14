@@ -1,4 +1,5 @@
 require("dotenv").config();
+const withRetry = require('./retry');
 const { JsonRpcProvider, Wallet } = require("ethers");
 
 const provider = new JsonRpcProvider(process.env.RPC_URL);

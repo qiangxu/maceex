@@ -1,6 +1,6 @@
 // src/utils/ndjson.js
-import fs from 'fs';
-import readline from 'readline';
+import fs from "fs";
+import readline from "readline";
 
 export async function readNdjson(filePath) {
   const results = [];
@@ -9,19 +9,19 @@ export async function readNdjson(filePath) {
 
   const rl = readline.createInterface({
     input: fileStream,
-    crlfDelay: Infinity
+    crlfDelay: Infinity,
   });
 
   for await (const line of rl) {
-    if (line.trim() !== '') {
+    if (line.trim() !== "") {
       try {
         results.push(JSON.parse(line));
       } catch (err) {
         console.warn(`❌ Skipping invalid JSON line: ${line}`);
+        return [];
       }
     }
   }
 
   return results;
 }
-

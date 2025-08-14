@@ -1,50 +1,32 @@
-// src/watcher.js
-import 'dotenv/config';
-import chokidar from 'chokidar';
-import fs from 'fs';
-import readline from 'readline';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { openDB, isProcessed, saveResult } from './db.js';
-import { attestRecord } from './eas.js';
-import { setTimeout as sleep } from 'node:timers/promises';
+// watch.mjs
 
-const INPUT_FILE = process.env.INPUT_FILE
-console.log(`👀 Monitoring: ${INPUT_FILE}`);
-const db = await openDB(process.env.DB_STATE);
+import "dotenv/config";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-async function processFile(filePath) {
-	const rl = readline.createInterface({
-		input: fs.createReadStream(filePath),
-		crlfDelay: Infinity
-	});
+// ES 模块中没有 __dirname，需要自己生成
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-	for await (const line of rl) {
-		if (!line.trim()) continue;
+const DIR_INPUT_RECORDS = process.env.DIR_INPUT_RECORDS;
+const dirToWatch = path.resolve(DIR_INPUT_RECORDS);
 
-		try {
-			const record = JSON.parse(line);
-			const recordId = record.RECORD_ID;
-
-			if (await isProcessed(db, recordId)) {
-				console.log(`⏩ Skipped RECORD_ID ${recordId}, already processed.`);
-				continue;
-			}
-
-			const tx = await attestRecord(record);
-			let uid = await tx.wait();
-			console.log(`✅ RECORD_ID ${recordId} attested. UID: ${uid}`);
-
-			await saveResult(db, recordId, uid);
-		} catch (err) {
-			console.error('❌ Error processing line:', err);
-		}
-		await sleep(3000); // sleep 3 秒	
-	}
+// 确保目录存在
+if (!fs.existsSync(dirToWatch)) {
+  fs.mkdirSync(dirToWatch, { recursive: true });
 }
 
-await processFile(INPUT_FILE);
-//chokidar.watch(INPUT_FILE).on('change', async () => {
-//	console.log('📂 File changed, processing...');
-//	await processFile(INPUT_FILE);
-//});
+console.log(`📡 正在监听目录: ${dirToWatch}`);
+
+fs.watch(dirToWatch, { recursive: true }, (eventType, filename) => {
+  if (filename) {
+    console.log(
+      `[${new Date().toLocaleString()}] 事件: ${eventType}  文件: ${filename}`,
+    );
+  } else {
+    console.log(
+      `[${new Date().toLocaleString()}] 事件: ${eventType} (未知文件)`,
+    );
+  }
+});

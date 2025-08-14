@@ -27,7 +27,6 @@ import { attestMerkleBatch, getReceipt } from "./eas.js";
 const DIR_INPUT_RECORDS = process.env.DIR_INPUT_RECORDS;
 const DIR_MERKLE = process.env.DIR_MERKLE;
 const APP_STATE = process.env.APP_STATE;
-const EXECUTION_GAP_HOURS = parseInt(process.env.EXECUTION_GAP, 10) || 12;
 
 const toHex = (buf) => "0x" + Buffer.from(buf).toString("hex");
 const leafFromRecord = (rec) => keccak256(Buffer.from(JSON.stringify(rec)));
@@ -67,7 +66,6 @@ async function recoverBatches(db) {
 
   for (const h of heads) {
     const { batch_id, tx_hash, merkle_root, proofs_cid } = h;
-
     // 1) 有 tx_hash：先查链
     if (tx_hash) {
       try {
@@ -92,6 +90,12 @@ async function recoverBatches(db) {
     // 2) 没有 tx_hash：重发同一批次
     try {
       const count = await countBatchMembers(db, batch_id);
+      if (count == 0) {
+        console.log(`⚠️ no record to attest for batch_id ${batch_id}`);
+        await markBatchConfirmed(db, { batch_id, attestation_uid: null });
+        return;
+      }
+
       const { uid, txHash } = await attestMerkleBatch({
         merkle_root,
         batch_id,
@@ -111,7 +115,6 @@ async function recoverBatches(db) {
 async function runBatchCycle(db) {
   // 0) 启动先做一次恢复
   await recoverBatches(db);
-
   // 1) 读取全部文件，过滤已 attested 的 record
   const all = await readAllRecords(DIR_INPUT_RECORDS);
   const attested = new Set(await getAllAttestedRecordIds(db));
@@ -207,36 +210,23 @@ async function main() {
   // --- STEP 1: READ THE INTERVAL CONFIGURATION ---
   // Reads the environment variable and converts it to milliseconds.
   // If EXECUTION_GAP is not defined, it defaults to 12 hours.
-  const intervalMilliseconds = EXECUTION_GAP_HOURS * 60 * 60 * 1000;
-  console.log(
-    `Starting batch processor. Checking for new records every ${EXECUTION_GAP_HOURS} hour(s).`,
-  );
 
   // Open the database connection ONCE.
   const db = await openDB(APP_STATE);
+  runBatchCycle(db);
 
-  // --- STEP 2: DEFINE THE RECURRING TASK ---
-  // 'executeAndSchedule' is the function that will run in each cycle.
-  const executeAndSchedule = async () => {
-    try {
-      // Calls the main batching logic.
-      await runBatchCycle(db);
-    } catch (e) {
-      console.error(`❌ A critical error occurred during the batch cycle:`, e);
-      // The error is logged, but the process continues.
-    } finally {
-      // --- STEP 4: SCHEDULE THE NEXT EXECUTION ---
-      console.log(`Next check scheduled in ${EXECUTION_GAP_HOURS} hour(s).`);
-      // This is the line that creates the loop. It calls this same function
-      // after the time interval has passed.
-      setTimeout(executeAndSchedule, intervalMilliseconds);
+  fs.watch(DIR_INPUT_RECORDS, { recursive: true }, (eventType, filename) => {
+    if (filename) {
+      console.log(
+        `[${new Date().toLocaleString()}] 事件: ${eventType}  文件: ${filename}`,
+      );
+      runBatchCycle(db);
+    } else {
+      console.log(
+        `[${new Date().toLocaleString()}] 事件: ${eventType} (未知文件)`,
+      );
     }
-  };
-
-  // --- STEP 3: START THE FIRST CYCLE ---
-  // We call the function once so it runs immediately on startup.
-  // After this first execution, it will schedule the next one by itself.
-  await executeAndSchedule();
+  });
 }
 
 main().catch((e) => {

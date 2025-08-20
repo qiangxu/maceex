@@ -108,8 +108,13 @@ export async function markBatchConfirmed(
 	  WHERE batch_id=? AND record_id <> ?`,
     [attestation_uid, tx_hash, batch_id, rid],
   );
-
-  // 头记录删除（可选改为软删除）
+  // 头记录（可选改为软删除）
+  await db.run(
+    `UPDATE attestations
+		SET status='confirmed', error=NULL
+	  WHERE record_id=?`,
+    [rid],
+  );
   /*
   await db.run(`DELETE FROM attestations WHERE record_id=?`, [rid]);
   */

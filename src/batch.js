@@ -196,7 +196,7 @@ async function runBatchCycle(db) {
   console.log({ uid, txHash });
   // 发送后立刻写 tx_hash（为恢复准备）
   await markBatchSent(db, { batch_id: bid, tx_hash: txHash });
-
+    
   await markBatchConfirmed(db, {
     batch_id: bid,
     attestation_uid: uid,
@@ -216,7 +216,7 @@ async function main() {
   runBatchCycle(db);
 
   fs.watch(DIR_INPUT_RECORDS, { recursive: true }, (eventType, filename) => {
-    if (filename) {
+    if (filename && filename.endsWith('.ndjson')) {
       console.log(
         `[${new Date().toLocaleString()}] 事件: ${eventType}  文件: ${filename}`,
       );
